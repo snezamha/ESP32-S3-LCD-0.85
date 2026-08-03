@@ -78,6 +78,62 @@ void Display::drawCenteredText(const char *text, int y, uint8_t textSize)
     gfx->print(text);
 }
 
+void Display::drawPixel(
+    int16_t x,
+    int16_t y,
+    uint16_t color)
+{
+    gfx->drawPixel(x, y, color);
+}
+
+void Display::drawLine(
+    int16_t x0,
+    int16_t y0,
+    int16_t x1,
+    int16_t y1,
+    uint16_t color)
+{
+    gfx->drawLine(x0, y0, x1, y1, color);
+}
+
+void Display::drawRect(
+    int16_t x,
+    int16_t y,
+    int16_t w,
+    int16_t h,
+    uint16_t color)
+{
+    gfx->drawRect(x, y, w, h, color);
+}
+
+void Display::fillRect(
+    int16_t x,
+    int16_t y,
+    int16_t w,
+    int16_t h,
+    uint16_t color)
+{
+    gfx->fillRect(x, y, w, h, color);
+}
+
+void Display::drawCircle(
+    int16_t x,
+    int16_t y,
+    int16_t r,
+    uint16_t color)
+{
+    gfx->drawCircle(x, y, r, color);
+}
+
+void Display::fillCircle(
+    int16_t x,
+    int16_t y,
+    int16_t r,
+    uint16_t color)
+{
+    gfx->fillCircle(x, y, r, color);
+}
+
 int Display::width()
 {
     return gfx->width();
