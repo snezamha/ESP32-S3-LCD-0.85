@@ -28,8 +28,6 @@ void Display::begin()
 
     pinMode(LCD_BL, OUTPUT);
     digitalWrite(LCD_BL, HIGH);
-
-    drawBootScreen();
 }
 
 void Display::drawBootScreen()
