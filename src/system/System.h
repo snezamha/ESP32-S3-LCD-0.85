@@ -9,5 +9,7 @@ public:
     void update();
 
 private:
+    void drawDashboard();
+
     Display display;
 };
