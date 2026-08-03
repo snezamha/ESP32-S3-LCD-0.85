@@ -3,9 +3,12 @@
 void System::begin()
 {
     display.begin();
-    display.drawBootScreen();
+
+    homeScreen.begin();
+    homeScreen.draw();
 }
 
 void System::update()
 {
+    homeScreen.update();
 }

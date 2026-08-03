@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../drivers/display/Display.h"
+#include "../screens/HomeScreen.h"
 
 class System
 {
@@ -10,4 +11,5 @@ public:
 
 private:
     Display display;
+    HomeScreen homeScreen{display};
 };
