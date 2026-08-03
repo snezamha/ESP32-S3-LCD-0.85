@@ -11,11 +11,22 @@ public:
 
     void clear();
 
-    void print(const char *text);
+    void setTextSize(uint8_t size);
 
-    void printCentered(const char *text, int y);
+    void setTextColor(uint16_t color);
+
+    void drawText(const char *text);
+
+    void drawCenteredText(
+        const char *text,
+        int y,
+        uint8_t textSize = 1);
 
     void drawBootScreen();
+
+    int width();
+
+    int height();
 
 private:
     Arduino_DataBus *bus;

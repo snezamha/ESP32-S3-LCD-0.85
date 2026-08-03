@@ -39,12 +39,11 @@ void Display::drawBootScreen()
     gfx->setTextColor(COLOR_TEXT);
 
     gfx->setTextSize(2);
-    printCentered("ESP32", 20);
-
-    printCentered("Framework", 45);
+    drawCenteredText("ESP32", 20);
+    drawCenteredText("Framework", 45);
 
     gfx->setTextSize(1);
-    printCentered(FRAMEWORK_VERSION, 80);
+    drawCenteredText(FRAMEWORK_VERSION, 80);
 }
 
 void Display::clear()
@@ -52,21 +51,41 @@ void Display::clear()
     gfx->fillScreen(COLOR_BACKGROUND);
 }
 
-void Display::print(const char *text)
+void Display::setTextSize(uint8_t size)
+{
+    gfx->setTextSize(size);
+}
+
+void Display::setTextColor(uint16_t color)
+{
+    gfx->setTextColor(color);
+}
+
+void Display::drawText(const char *text)
 {
     gfx->println(text);
 }
 
-void Display::printCentered(const char *text, int y)
+void Display::drawCenteredText(const char *text, int y, uint8_t textSize)
 {
+    gfx->setTextSize(textSize);
+
     int16_t x1, y1;
     uint16_t w, h;
 
     gfx->getTextBounds(text, 0, y, &x1, &y1, &w, &h);
 
     int x = (gfx->width() - w) / 2;
-
     gfx->setCursor(x, y);
-
     gfx->print(text);
+}
+
+int Display::width()
+{
+    return gfx->width();
+}
+
+int Display::height()
+{
+    return gfx->height();
 }
