@@ -1,9 +1,5 @@
 #pragma once
 
-// ==========================
-// Display
-// ==========================
-
 constexpr int LCD_DC = 45;
 constexpr int LCD_CS = 21;
 constexpr int LCD_SCK = 38;

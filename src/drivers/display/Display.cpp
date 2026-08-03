@@ -1,5 +1,7 @@
 #include "Display.h"
 #include "../../config/Pins.h"
+#include "../../config/Version.h"
+#include "../../config/Colors.h"
 
 Display::Display()
 {
@@ -29,18 +31,17 @@ void Display::begin()
     clear();
 
     gfx->setCursor(10, 20);
-    gfx->setTextColor(RGB565_WHITE);
+    gfx->setTextColor(COLOR_TEXT);
     gfx->setTextSize(2);
 
-    gfx->println("ESP32-S3-LCD-0.85");
+    gfx->println(FRAMEWORK_NAME);
     gfx->println();
-    gfx->println("Framework");
-    gfx->println("v0.1.0");
+    gfx->println(FRAMEWORK_VERSION);
 }
 
 void Display::clear()
 {
-    gfx->fillScreen(RGB565_BLACK);
+    gfx->fillScreen(COLOR_BACKGROUND);
 }
 
 void Display::print(const char *text)
