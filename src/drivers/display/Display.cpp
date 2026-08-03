@@ -1,4 +1,5 @@
 #include "Display.h"
+
 #include "../../config/Pins.h"
 #include "../../config/Version.h"
 #include "../../config/Colors.h"
@@ -28,15 +29,22 @@ void Display::begin()
     pinMode(LCD_BL, OUTPUT);
     digitalWrite(LCD_BL, HIGH);
 
+    drawBootScreen();
+}
+
+void Display::drawBootScreen()
+{
     clear();
 
-    gfx->setCursor(10, 20);
     gfx->setTextColor(COLOR_TEXT);
-    gfx->setTextSize(2);
 
-    gfx->println(FRAMEWORK_NAME);
-    gfx->println();
-    gfx->println(FRAMEWORK_VERSION);
+    gfx->setTextSize(2);
+    printCentered("ESP32", 20);
+
+    printCentered("Framework", 45);
+
+    gfx->setTextSize(1);
+    printCentered(FRAMEWORK_VERSION, 80);
 }
 
 void Display::clear()
@@ -47,4 +55,18 @@ void Display::clear()
 void Display::print(const char *text)
 {
     gfx->println(text);
+}
+
+void Display::printCentered(const char *text, int y)
+{
+    int16_t x1, y1;
+    uint16_t w, h;
+
+    gfx->getTextBounds(text, 0, y, &x1, &y1, &w, &h);
+
+    int x = (gfx->width() - w) / 2;
+
+    gfx->setCursor(x, y);
+
+    gfx->print(text);
 }

@@ -1,14 +1,3 @@
-/* #pragma once
-
-class Display
-{
-public:
-    void begin();
-
-    void clear();
-
-    void print(const char *text);
-}; */
 #pragma once
 
 #include <Arduino_GFX_Library.h>
@@ -19,8 +8,14 @@ public:
     Display();
 
     void begin();
+
     void clear();
+
     void print(const char *text);
+
+    void printCentered(const char *text, int y);
+
+    void drawBootScreen();
 
 private:
     Arduino_DataBus *bus;
