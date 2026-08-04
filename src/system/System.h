@@ -4,6 +4,7 @@
 
 #include "../config/Pins.h"
 #include "../drivers/display/Display.h"
+#include "../screens/ScreenManager.h"
 
 class System
 {
@@ -49,11 +50,8 @@ private:
     float readBatteryVoltage() const;
     int readBatteryPercent() const;
 
-    void drawDashboard();
-    void drawCounter();
-    void drawBattery();
-
     Display display;
+    ScreenManager screenManager{display};
 
     int counter = 0;
     int batteryPercent = 0;

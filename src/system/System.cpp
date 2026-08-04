@@ -18,13 +18,14 @@ void System::begin()
     delay(BOOT_SCREEN_MS);
 
     updateBattery(true);
-    drawDashboard();
+    screenManager.begin(batteryPercent, counter);
 }
 
 void System::update()
 {
     handleButtons();
     updateBattery();
+    screenManager.update(batteryPercent, counter);
 }
 
 void System::keepBatteryPowerOn()
@@ -96,19 +97,21 @@ void System::handleButton(ButtonState &button, void (System::*onClick)(), void (
 
 void System::onMinusClick()
 {
-    counter--;
-    drawCounter();
+    screenManager.onMinus(batteryPercent, counter);
 }
 
 void System::onMinusLongPress()
 {
-    counter = 0;
-    drawCounter();
+    if (screenManager.isEditingCounter())
+    {
+        counter = 0;
+        screenManager.redraw(batteryPercent, counter);
+    }
 }
 
 void System::onPowerClick()
 {
-    updateBattery(true);
+    screenManager.onSelect(batteryPercent, counter);
 }
 
 void System::onPowerLongPress()
@@ -118,14 +121,16 @@ void System::onPowerLongPress()
 
 void System::onPlusClick()
 {
-    counter++;
-    drawCounter();
+    screenManager.onPlus(batteryPercent, counter);
 }
 
 void System::onPlusLongPress()
 {
-    counter += 5;
-    drawCounter();
+    if (screenManager.isEditingCounter())
+    {
+        counter += 5;
+        screenManager.redraw(batteryPercent, counter);
+    }
 }
 
 void System::updateBattery(bool force)
@@ -143,7 +148,7 @@ void System::updateBattery(bool force)
     if (force || nextPercent != batteryPercent)
     {
         batteryPercent = nextPercent;
-        drawBattery();
+        screenManager.onBatteryChanged(batteryPercent, counter);
     }
 }
 
@@ -161,41 +166,4 @@ int System::readBatteryPercent() const
                     (BATTERY_FULL_VOLTAGE - BATTERY_EMPTY_VOLTAGE);
 
     return constrain(static_cast<int>(percent + 0.5F), 0, 100);
-}
-
-void System::drawDashboard()
-{
-    display.clear();
-
-    display.drawCenteredText("Lesson 10", 8, 2);
-    display.drawCenteredText("Battery power", 30, 1);
-    drawBattery();
-
-    display.drawLine(16, 52, 112, 52, COLOR_DIVIDER);
-
-    display.drawCenteredText("MINUS -1", 62, 1);
-    display.drawCenteredText("PLUS +1", 76, 1);
-    display.drawCenteredText("Hold PWR off", 112, 1);
-
-    drawCounter();
-
-    display.fillCircle(112, 112, 4, COLOR_SUCCESS);
-}
-
-void System::drawCounter()
-{
-    char text[12];
-    snprintf(text, sizeof(text), "%d", counter);
-
-    display.fillRect(34, 88, 60, 20, COLOR_BACKGROUND);
-    display.drawCenteredText(text, 90, 2);
-}
-
-void System::drawBattery()
-{
-    char text[16];
-    snprintf(text, sizeof(text), "Battery: %d%%", batteryPercent);
-
-    display.fillRect(12, 42, 104, 8, COLOR_BACKGROUND);
-    display.drawCenteredText(text, 42, 1);
 }
