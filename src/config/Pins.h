@@ -8,3 +8,7 @@ constexpr int LCD_RST = 40;
 constexpr int LCD_BL = 46;
 
 constexpr int BUTTON_BOOT = 0;
+constexpr int BUTTON_POWER = 4;
+constexpr int BUTTON_PLUS = 5;
+
+constexpr int BATTERY_ADC = 1;
