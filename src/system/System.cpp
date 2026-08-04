@@ -5,14 +5,18 @@
 
 void System::begin()
 {
-    pinMode(BUTTON_BOOT, INPUT_PULLUP);
+    keepBatteryPowerOn();
+
+    pinMode(BUTTON_MINUS, INPUT_PULLUP);
     pinMode(BUTTON_POWER, INPUT_PULLUP);
     pinMode(BUTTON_PLUS, INPUT_PULLUP);
-    pinMode(LCD_BL, OUTPUT);
 
     analogReadResolution(12);
 
     display.begin();
+    display.drawBootScreen();
+    delay(BOOT_SCREEN_MS);
+
     updateBattery(true);
     drawDashboard();
 }
@@ -20,16 +24,33 @@ void System::begin()
 void System::update()
 {
     handleButtons();
+    updateBattery();
+}
 
-    if (displayOn)
+void System::keepBatteryPowerOn()
+{
+    pinMode(BATTERY_ENABLE, OUTPUT);
+    digitalWrite(BATTERY_ENABLE, HIGH);
+    delay(50);
+}
+
+void System::powerOff()
+{
+    display.clear();
+    display.setBacklight(false);
+    delay(100);
+
+    digitalWrite(BATTERY_ENABLE, LOW);
+
+    while (true)
     {
-        updateBattery();
+        delay(1000);
     }
 }
 
 void System::handleButtons()
 {
-    handleButton(bootButton, &System::onBootClick, &System::onBootLongPress);
+    handleButton(minusButton, &System::onMinusClick, &System::onMinusLongPress);
     handleButton(powerButton, &System::onPowerClick, &System::onPowerLongPress);
     handleButton(plusButton, &System::onPlusClick, &System::onPlusLongPress);
 }
@@ -73,79 +94,38 @@ void System::handleButton(ButtonState &button, void (System::*onClick)(), void (
     button.lastReading = reading;
 }
 
-void System::onBootClick()
+void System::onMinusClick()
 {
-    if (!displayOn)
-    {
-        return;
-    }
-
-    counter++;
+    counter--;
     drawCounter();
 }
 
-void System::onBootLongPress()
+void System::onMinusLongPress()
 {
-    if (!displayOn)
-    {
-        return;
-    }
-
     counter = 0;
     drawCounter();
 }
 
 void System::onPowerClick()
 {
-    setDisplayOn(!displayOn);
+    updateBattery(true);
 }
 
 void System::onPowerLongPress()
 {
-    setDisplayOn(!displayOn);
+    powerOff();
 }
 
 void System::onPlusClick()
 {
-    if (!displayOn)
-    {
-        return;
-    }
-
-    counter += 5;
+    counter++;
     drawCounter();
 }
 
 void System::onPlusLongPress()
 {
-    if (!displayOn)
-    {
-        return;
-    }
-
-    updateBattery(true);
-}
-
-void System::setDisplayOn(bool on)
-{
-    if (displayOn == on)
-    {
-        return;
-    }
-
-    displayOn = on;
-
-    if (displayOn)
-    {
-        digitalWrite(LCD_BL, HIGH);
-        updateBattery(true);
-        drawDashboard();
-    }
-    else
-    {
-        display.clear();
-        digitalWrite(LCD_BL, LOW);
-    }
+    counter += 5;
+    drawCounter();
 }
 
 void System::updateBattery(bool force)
@@ -167,14 +147,14 @@ void System::updateBattery(bool force)
     }
 }
 
-float System::readBatteryVoltage()
+float System::readBatteryVoltage() const
 {
     int raw = analogRead(BATTERY_ADC);
     float adcVoltage = (raw * ADC_REFERENCE_VOLTAGE) / ADC_MAX_READING;
     return adcVoltage * BATTERY_DIVIDER_RATIO;
 }
 
-int System::readBatteryPercent()
+int System::readBatteryPercent() const
 {
     float voltage = readBatteryVoltage();
     float percent = ((voltage - BATTERY_EMPTY_VOLTAGE) * 100.0F) /
@@ -185,21 +165,18 @@ int System::readBatteryPercent()
 
 void System::drawDashboard()
 {
-    if (!displayOn)
-    {
-        return;
-    }
-
     display.clear();
 
     display.drawCenteredText("Lesson 10", 8, 2);
-    display.drawCenteredText("PWR toggles display", 30, 1);
+    display.drawCenteredText("Battery power", 30, 1);
     drawBattery();
 
     display.drawLine(16, 52, 112, 52, COLOR_DIVIDER);
 
-    display.drawCenteredText("BOOT +1", 62, 1);
-    display.drawCenteredText("PLUS +5", 76, 1);
+    display.drawCenteredText("MINUS -1", 62, 1);
+    display.drawCenteredText("PLUS +1", 76, 1);
+    display.drawCenteredText("Hold PWR off", 112, 1);
+
     drawCounter();
 
     display.fillCircle(112, 112, 4, COLOR_SUCCESS);
@@ -207,25 +184,15 @@ void System::drawDashboard()
 
 void System::drawCounter()
 {
-    if (!displayOn)
-    {
-        return;
-    }
-
     char text[12];
     snprintf(text, sizeof(text), "%d", counter);
 
-    display.fillRect(34, 90, 60, 22, COLOR_BACKGROUND);
-    display.drawCenteredText(text, 92, 2);
+    display.fillRect(34, 88, 60, 20, COLOR_BACKGROUND);
+    display.drawCenteredText(text, 90, 2);
 }
 
 void System::drawBattery()
 {
-    if (!displayOn)
-    {
-        return;
-    }
-
     char text[16];
     snprintf(text, sizeof(text), "Battery: %d%%", batteryPercent);
 

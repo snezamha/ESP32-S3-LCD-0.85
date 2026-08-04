@@ -9,6 +9,8 @@ public:
 
     void begin();
 
+    void setBacklight(bool on);
+
     void clear();
 
     void setTextSize(uint8_t size);

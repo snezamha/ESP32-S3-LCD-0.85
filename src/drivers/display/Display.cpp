@@ -27,7 +27,12 @@ void Display::begin()
     }
 
     pinMode(LCD_BL, OUTPUT);
-    digitalWrite(LCD_BL, HIGH);
+    setBacklight(true);
+}
+
+void Display::setBacklight(bool on)
+{
+    digitalWrite(LCD_BL, on ? HIGH : LOW);
 }
 
 void Display::drawBootScreen()
